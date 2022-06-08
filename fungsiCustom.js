@@ -1,5 +1,6 @@
 // TODO: import module bila dibutuhkan di sini
 const fs = require("fs");
+const { exit } = require("process");
 
 // ! JANGAN DIMODIFIKASI
 let file1 = "./data1.json";
@@ -20,34 +21,53 @@ let modifyFile3 = (val) => {
 // TODO: Kerjakan bacaData
 // gunakan variabel file1, file2, dan file3
 const bacaData = (fnCallback) => {
-  const paths = [file1, file2, file3];
-  let errs = null;
   let datas = [];
-  paths.forEach((e, i) => {
-    fs.readFile(e, "utf8", (err, data) => {
-      if (err) {
-        return fnCallback(err, data);
+  fs.readFile(file1, (err, data) => {
+    if (err) return fnCallback(err, null);
+
+    const dataHasilSplit = JSON.parse(data).message.split(" ");
+    if (!dataHasilSplit) {
+      return fnCallback("Tidak ada data dari " + file1, null);
+    } else if (dataHasilSplit.length < 2) {
+      return fnCallback(
+        "Message dari " + file1 + " kurang dari dua kata",
+        null
+      );
+    } else {
+      datas.push(dataHasilSplit[1]);
+    }
+    fs.readFile(file2, (err, data) => {
+      if (err) return fnCallback(err, null);
+
+      const dataHasilSplit = JSON.parse(data)[0].message.split(" ");
+      if (!dataHasilSplit) {
+        return fnCallback("Tidak ada data dari " + file2, null);
+      } else if (dataHasilSplit.length < 2) {
+        return fnCallback(
+          "Message dari " + file2 + " kurang dari dua kata",
+          null
+        );
       } else {
-        switch (i) {
-          case 0:
-            dataJson = JSON.parse(data).message.split(" ");
-            if (dataJson.length >= 2) datas.push(dataJson[1]);
-            break;
-          case 1:
-            dataJson = JSON.parse(data)[0].message.split(" ");
-            if (dataJson.length >= 2) datas.push(dataJson[1]);
-            break;
-          case 2:
-            dataJson = JSON.parse(data)[0].data.message.split(" ");
-            if (dataJson.length >= 2) datas.push(dataJson[1]);
-            break;
-          default:
-            return data;
-        }
+        datas.push(dataHasilSplit[1]);
       }
+      fs.readFile(file3, (err, data) => {
+        if (err) return fnCallback(err, null);
+
+        const dataHasilSplit = JSON.parse(data)[0].data.message.split(" ");
+        if (!dataHasilSplit) {
+          return fnCallback("Tidak ada data dari " + file3, null);
+        } else if (dataHasilSplit.length < 2) {
+          return fnCallback(
+            "Message dari " + file3 + " kurang dari dua kata",
+            null
+          );
+        } else {
+          datas.push(dataHasilSplit[1]);
+        }
+        return fnCallback(null, datas);
+      });
     });
   });
-  fnCallback(errs, datas);
 };
 
 // ! JANGAN DIMODIFIKASI

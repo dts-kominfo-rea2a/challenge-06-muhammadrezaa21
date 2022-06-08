@@ -47,9 +47,7 @@ const bacaData = (fnCallback) => {
       }
     });
   });
-  setTimeout(() => {
-    fnCallback(errs, datas);
-  }, 5000);
+  fnCallback(errs, datas);
 };
 
 // ! JANGAN DIMODIFIKASI

@@ -19,29 +19,27 @@ let modifyFile3 = (val) => {
 
 // TODO: Kerjakan bacaData
 // gunakan variabel file1, file2, dan file3
-const paths = [file1, file2, file3];
-let errs = null;
-let datas = [];
-
 const bacaData = (fnCallback) => {
+  const paths = [file1, file2, file3];
+  let errs = null;
+  let datas = [];
   paths.forEach((e, i) => {
     fs.readFile(e, "utf8", (err, data) => {
       if (err) {
         return fnCallback(err, data);
       } else {
-        let dataJsonArray = [];
         switch (i) {
           case 0:
             dataJson = JSON.parse(data).message.split(" ");
-            if (dataJson.length >= 2) fnCallback(null, dataJson);
+            if (dataJson.length >= 2) datas.push(dataJson[1]);
             break;
           case 1:
             dataJson = JSON.parse(data)[0].message.split(" ");
-            if (dataJson.length >= 2) fnCallback(null, dataJson);
+            if (dataJson.length >= 2) datas.push(dataJson[1]);
             break;
           case 2:
             dataJson = JSON.parse(data)[0].data.message.split(" ");
-            if (dataJson.length >= 2) fnCallback(null, dataJson);
+            if (dataJson.length >= 2) datas.push(dataJson[1]);
             break;
           default:
             return data;
@@ -49,6 +47,9 @@ const bacaData = (fnCallback) => {
       }
     });
   });
+  setTimeout(() => {
+    fnCallback(errs, datas);
+  }, 5000);
 };
 
 // ! JANGAN DIMODIFIKASI
